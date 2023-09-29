@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "migratik"
+version = "0.1.0"
+authors = [
+  { name="Abstract-X", email="abstract-x-mail@protonmail.com" },
+]
+description = "A database migration tool."
+readme = "README.md"
+# license = { file="LICENSE" }
+requires-python = ">= 3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "PyYAML >= 6.0.1, < 7"
+]
+
+[project.scripts]
+migratik = "migratik.console_scripts:process_command"
+
+[project.urls]
+"Homepage" = "https://github.com/Abstract-X/migratik"
+"Bug Tracker" = "https://github.com/Abstract-X/migratik/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["migratik"]
