@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A database migration tool."
 readme = "README.md"
-# license = { file="LICENSE" }
+license = { file="LICENSE" }
 requires-python = ">= 3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
