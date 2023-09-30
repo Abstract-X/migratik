@@ -22,3 +22,7 @@ class MigrationParsingError(MigratikError):
 
 class MigrationTableError(MigratikError):
     pass
+
+
+class ConfigError(MigratikError):
+    pass

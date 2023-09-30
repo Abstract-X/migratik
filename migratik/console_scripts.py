@@ -6,7 +6,7 @@ from typing import Any
 from migratik.config import get_config, Config
 from migratik.migrator import Migrator
 from migratik.backends.backend import AbstractBackend
-from migratik.errors import MigratikError
+from migratik.errors import MigratikError, ConfigError
 
 
 _CONFIG_TEMPLATE = (
@@ -65,13 +65,13 @@ def process_status(namespace: Namespace) -> None:
         config = _get_config()
         migrator = Migrator(config.migrations.path)
         migration_files = migrator.get_migration_files()
+        backend = _get_backend(config)
 
         if migration_files:
             latest_version = migration_files[-1].version
         else:
             latest_version = "—"
 
-        backend = _get_backend(config.backend.class_, config.backend.kwargs)
         current_version = backend.get_version() or "—"
     except MigratikError as error:
         print(error)
@@ -95,7 +95,7 @@ def process_upgrade(namespace: Namespace) -> None:
     try:
         config = _get_config()
         migrator = Migrator(config.migrations.path)
-        backend = _get_backend(config.backend.class_, config.backend.kwargs)
+        backend = _get_backend(config)
         migrator.upgrade(backend, namespace.version)
     except MigratikError as error:
         print(error)
@@ -105,7 +105,7 @@ def process_downgrade(namespace: Namespace) -> None:
     try:
         config = _get_config()
         migrator = Migrator(config.migrations.path)
-        backend = _get_backend(config.backend.class_, config.backend.kwargs)
+        backend = _get_backend(config)
         migrator.downgrade(backend, namespace.version)
     except MigratikError as error:
         print(error)
@@ -123,7 +123,12 @@ def _get_config() -> Config:
         ) from None
 
 
-def _get_backend(class_: str, kwargs: dict[str, Any]) -> AbstractBackend:
+def _get_backend(config: Config) -> AbstractBackend:
+    if config.backend is None:
+        raise ConfigError("There is no backend data in configuration!")
+
+    class_ = config.backend.class_
+
     if "." in class_:
         module, class_ = class_.rsplit(".", 1)
     else:
@@ -132,4 +137,4 @@ def _get_backend(class_: str, kwargs: dict[str, Any]) -> AbstractBackend:
     module = importlib.import_module(module)
     class_ = getattr(module, class_)
 
-    return class_(**kwargs)
+    return class_(**config.backend.kwargs)

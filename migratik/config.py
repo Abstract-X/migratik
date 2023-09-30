@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Union
+from typing import Any, Union, Optional
 from pathlib import Path
 
 import yaml
@@ -20,7 +20,7 @@ class BackendSection:
 @dataclass
 class Config:
     migrations: MigrationSection
-    backend: BackendSection
+    backend: Optional[BackendSection] = None
 
 
 def get_config(path: Union[str, Path]) -> Config:
@@ -29,12 +29,17 @@ def get_config(path: Union[str, Path]) -> Config:
     with path.open(encoding="UTF-8") as file:
         data = yaml.load(file, Loader)
 
+    backend_section = data.get("backend")
+
+    if backend_section is not None:
+        backend_section = BackendSection(
+            class_=backend_section["class"],
+            kwargs=backend_section.get("kwargs", {})
+        )
+
     return Config(
         migrations=MigrationSection(
             path=Path(data["migrations"]["path"])
         ),
-        backend=BackendSection(
-            class_=data["backend"]["class"],
-            kwargs=data["backend"].get("kwargs", {})
-        )
+        backend=backend_section
     )
