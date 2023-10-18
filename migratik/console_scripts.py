@@ -1,7 +1,6 @@
 from argparse import ArgumentParser, Namespace
 import importlib
 from pathlib import Path
-from typing import Any
 
 from migratik.config import get_config, Config
 from migratik.migrator import Migrator
@@ -64,11 +63,11 @@ def process_status(namespace: Namespace) -> None:
     try:
         config = _get_config()
         migrator = Migrator(config.migrations.path)
-        migration_files = migrator.get_migration_files()
+        versions = migrator.get_versions()
         backend = _get_backend(config)
 
-        if migration_files:
-            latest_version = migration_files[-1].version
+        if versions:
+            latest_version = versions[-1]
         else:
             latest_version = "—"
 
@@ -86,9 +85,11 @@ def process_create(namespace: Namespace) -> None:
     try:
         config = _get_config()
         migrator = Migrator(config.migrations.path)
-        migrator.create_migration_file()
+        path = migrator.create_migration()
     except MigratikError as error:
         print(error)
+    else:
+        print(f"Migration {str(path)!r} created.")
 
 
 def process_upgrade(namespace: Namespace) -> None:

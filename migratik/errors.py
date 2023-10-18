@@ -12,10 +12,6 @@ class MigrationPathError(MigratikError):
     pass
 
 
-class MigrationFileError(MigratikError):
-    pass
-
-
 class MigrationParsingError(MigratikError):
     pass
 

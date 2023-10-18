@@ -63,11 +63,8 @@ class Psycopg2Backend(AbstractBackend):
         cursor.execute_query(
             f"""
             CREATE TABLE "{self.migration_table}" (
-                "id"                        SERIAL
+                "version"                   NUMERIC
                                             PRIMARY KEY,
-                "version"                   INTEGER
-                                            UNIQUE
-                                            NOT NULL,
                 "creation_timestamp"        TIMESTAMP WITH TIME ZONE
                                             NOT NULL
                                             DEFAULT (NOW())
@@ -105,11 +102,11 @@ class Psycopg2Backend(AbstractBackend):
         cursor.execute_query(
             f"""
             SELECT
-                "id", "version", "creation_timestamp"
+                "version", "creation_timestamp"
             FROM
                 "{self.migration_table}"
             ORDER BY
-                "id" DESC
+                "version" DESC
             LIMIT
                 1;
             """
