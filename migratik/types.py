@@ -1,11 +1,4 @@
 from dataclasses import dataclass
-from pathlib import Path
-
-
-@dataclass
-class MigrationFile:
-    version: int
-    path: Path
 
 
 @dataclass
