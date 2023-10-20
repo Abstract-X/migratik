@@ -11,15 +11,15 @@ class VersionList:
         return iter(self._versions)
 
     def get_for_upgrade(self, current_version: int, version: Optional[int] = None) -> list[int]:
-        if current_version > version:
-            raise ValueError(
-                f"Current version {current_version} is greater "
-                f"than upgrade version {version}!"
-            )
-
         current_version_index = self._indexes[current_version]
 
         if version is not None:
+            if current_version > version:
+                raise ValueError(
+                    f"Current version {current_version} is greater "
+                    f"than upgrade version {version}!"
+                )
+
             version_index = self._indexes[version]
 
             return self._versions[current_version_index + 1:version_index + 1]
