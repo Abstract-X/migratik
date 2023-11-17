@@ -49,9 +49,7 @@ class AbstractBackend(ABC):
                     )
 
                 self.create_migration_table(cursor)
-
-                for i in range(1, version + 1):
-                    self.add_migration(cursor, version=i)
+                self.add_migration(cursor, version=version)
 
     def get_version(self) -> Optional[int]:
         with self.connect() as connection:
